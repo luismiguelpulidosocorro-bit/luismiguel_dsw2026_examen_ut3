@@ -20,6 +20,11 @@ export function errorHandler(
     }),
   );
 
+  if (err instanceof ResourceNotFoundError) {
+  res.status(404).json({ message: err.message, resourceId: err.resourceId});
+  return;
+  }
+
   if (err instanceof AppError) {
     res.status(err.statusCode).json({ error: err.code ?? 'ERROR', message: err.message });
     return;
@@ -30,10 +35,7 @@ export function errorHandler(
     return;
   }
 
-  if (err instanceof ResourceNotFoundError && 'body' in err) {
-    res.status(404).json({ message: err.message, resourceId: err.resourceId});
-    return;
-  }
+
 
   res.status(500).json({
     error: 'INTERNAL_ERROR',

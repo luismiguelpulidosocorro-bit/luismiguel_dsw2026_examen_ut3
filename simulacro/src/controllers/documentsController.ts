@@ -15,13 +15,7 @@ export function list(req: Request, res: Response): void {
 
 // GET /api/v1/admin/documents/:documentId
 export function getById(req: Request, res: Response): void {
-  const documentId = String(req.params.documentId)
-  const document = documentsService.getById(documentId);
-
-  if (!document) {
-    throw new ResourceNotFoundError(404, `Document with id '${documentId}' not found`, documentId, 'RESOURCE_NOT_FOUND',);
-  }
-
+  const document = documentsService.getById(String(req.params.documentId));
   res.json({ data: document });
 }
 

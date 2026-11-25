@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { ResourceNotFoundError } from '../errors/ResourceNotFoundError.js';
 
 interface Document {
   id: string;
@@ -49,6 +50,11 @@ export function create(title: string, description?: string) {
 // GET /api/v1/admin/documents/:documentId
 export function getById(documentId: string) {
   const document = documents.find((doc) => doc.id === documentId);
+
+  if(!document){
+    throw new ResourceNotFoundError(404, `Document with id '${documentId}' not found`, documentId, 'RESOURCE_NOT_FOUND',);
+  }
+
   return document;
 }
 

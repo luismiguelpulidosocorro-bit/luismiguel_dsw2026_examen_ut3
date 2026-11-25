@@ -57,3 +57,23 @@ app.listen(env.PORT, () => {
 **3. ¿Por qué se sube a GitHub el .env.example y se excluye .env?**
 
 Se excluye el archivo `.env` por temas de seguridad y entorno debido que contiene datos privados que no deben ser publicos, asi como configuraciones propias de cada ordenador, mientras que `.env.examen se sube debido que es una platillas con las variables necesarias para iniciar el proyecto.
+
+**4. ¿Dónde se crea el error de "documento no encontrado" y dónde se convierte en respuesta HTTP?**
+
+El error se crea en `src/services/documentsService.ts`, dentro de `getById`. Si no encuentra el documento, lanza `ResourceNotFoundError` (definido en `src/errors/ResourceNotFoundError.ts`):
+
+```
+throw new ResourceNotFoundError(404, `Document with id '${documentId}' not found`, documentId, 'RESOURCE_NOT_FOUND');
+``` 
+
+El controlador no lo captura. Express 5 envía automáticamente al middleware de errores cualquier excepción síncrona.
+
+Se convierte en respuesta HTTP en `src/middlewares/errorHandler.ts`, que comprueba el tipo de error y responde con un 404:
+
+``` 
+if (err instanceof ResourceNotFoundError) {
+  res.status(404).json({ message: err.message, resourceId: err.resourceId });
+}
+```
+
+Este middleware funciona porque `app.ts` lo registra el último, después de las rutas y de `notFound`.
