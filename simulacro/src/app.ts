@@ -9,6 +9,7 @@ import { logger } from './middlewares/logger.js';
 import { notFound } from './middlewares/notFound.js';
 import { errorHandler } from './middlewares/errorHandler.js';
 import { env } from './config/env.js';
+import { noticesRouter } from './routes/notices.js';
 export function createApp(): Application {
   const app = express();
   app.use(requestId);
@@ -22,7 +23,8 @@ export function createApp(): Application {
   app.use('/api/v1/admin/documents', documentsRouter);
   app.use('/api/v1/questions', questionsRouter);
   app.use('/api/v1/articles', articlesRouter);
-  
+  app.use('/api/v1/notices', noticesRouter);
+
   app.get('/test/:nombreEquipo', (req, res) => {
     const { nombreEquipo } = req.params;
     res.status(200).json({ team: nombreEquipo });
