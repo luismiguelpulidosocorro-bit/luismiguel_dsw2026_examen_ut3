@@ -77,3 +77,21 @@ if (err instanceof ResourceNotFoundError) {
 ```
 
 Este middleware funciona porque `app.ts` lo registra el último, después de las rutas y de `notFound`.
+
+**5. ¿Qué diferencia hay entre este recorrido y el del error centralizado de la actividad anterior?**
+
+En el error centralizado (documento no encontrado), el error se crea en el servicio con `throw new ResourceNotFoundError(...)`. 
+
+El controlador no lo captura: Express 5 lo envía al middleware `errorHandler`, que es quien decide el código HTTP y el cuerpo de la respuesta. Hay un único punto que responde.
+
+En la validación del título, el controlador detecta el problema antes de llamar al servicio y responde él mismo:
+
+```ts
+if (title !== undefined && (typeof title !== 'string' || title.trim() === '')) {
+  res.status(400).json({ error: 'INVALID_TITLE', message: 'Title must be a non-empty string' });
+  return;
+}
+```
+
+No lanza ningún error, no llama a `next(err)` y la petición nunca llega al `errorHandler`.
+

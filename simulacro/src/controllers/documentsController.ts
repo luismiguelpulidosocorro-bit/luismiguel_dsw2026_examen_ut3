@@ -35,8 +35,7 @@ export function create(req: Request, res: Response): void {
 export function update(req: Request, res: Response): void {
   const { title, description } = req.body;
 
-  const hasTitle= typeof(title);
-  if (title!==undefined && (title.trim() == '' || title !== undefined)){
+  if (title !== undefined && (title.trim() == '' || title !== undefined)){
     res.status(400).json({ error: 'INVALID_TITLE', message: 'Title must be a non-empty string' })
     return;
   }
