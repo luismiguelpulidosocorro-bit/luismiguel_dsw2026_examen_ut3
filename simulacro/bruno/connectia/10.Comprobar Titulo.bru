@@ -4,13 +4,18 @@ meta {
   seq: 10
 }
 
-get {
-  url: 
-  body: none
+patch {
+  url: {{baseUrl}}/api/v1/admin/documents/11111111-1111-4111-8111-111111111111
+  body: json
   auth: inherit
+}
+
+body:json {
+  { "title": " " }
 }
 
 settings {
   encodeUrl: true
+  timeout: 0
   forwardAuthorizationHeader: false
 }

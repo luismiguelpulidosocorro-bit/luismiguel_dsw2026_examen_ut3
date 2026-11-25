@@ -41,19 +41,42 @@ const notices: Notice[] = [
     createdAt: '2026-09-08T07:45:00.000Z',
   },
   {
+    id: '99999999-9999-4999-8999-999999999999',
+    title: 'Calendario de exámenes de la primera evaluación',
+    description: 'Del 15 al 19 de diciembre, consultar horarios por curso.',
+    createdAt: '2026-11-20T09:30:00.000Z',
+  },
+  {
     id: '88888888-8888-4888-8888-888888888888',
     title: 'Excursión al Parque Nacional del Teide',
     description: 'Autorizaciones firmadas antes del viernes.',
     createdAt: '2026-10-02T11:20:00.000Z',
   },
+  {
+    id: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+    title: 'Examen de recuperación de Matemáticas',
+    description: 'Aula 204, lunes a las 10:00.',
+    createdAt: '2026-11-22T08:00:00.000Z',
+  },
 ];
 
-export function list(page: number, limit: number) {
+// Minúsculas y sin tildes: "matricula" encuentra "Matrícula".
+function normalize(text: string): string {
+  return text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+}
+
+export function list(page: number, limit: number, search?: string) {
+  const term = normalize((search ?? '').trim());
+
+  // Si no hay término de búsqueda no se filtra por título.
+  const filtered = term === '' ? notices : notices.filter((n) => normalize(n.title).includes(term));
+
+  // total se calcula ANTES de paginar.
   const start = (page - 1) * limit;
 
   return {
-    data: notices.slice(start, start + limit),
-    total: notices.length,
+    data: filtered.slice(start, start + limit),
+    total: filtered.length,
   };
 }
 
@@ -61,7 +84,7 @@ export function list(page: number, limit: number) {
 export function create(title: string, description?: string): Notice {
   const notice: Notice = {
     id: randomUUID(),
-    title,
+    title: title.trim(),
     description: description ?? '',
     createdAt: new Date().toISOString(),
   };
@@ -90,7 +113,7 @@ export function update(noticeId: string, title?: string, description?: string): 
   const notice = getById(noticeId);
 
   if (title !== undefined) {
-    notice.title = title;
+    notice.title = title.trim();
   }
   if (description !== undefined) {
     notice.description = description;
