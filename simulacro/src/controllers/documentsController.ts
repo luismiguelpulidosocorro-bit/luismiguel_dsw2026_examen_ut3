@@ -1,6 +1,7 @@
 import type { Request, Response } from 'express';
 import * as documentsService from '../services/documentsService.js';
 import { AppError } from '../errors/AppError.js';
+import { ResourceNotFoundError } from '../errors/ResourceNotFoundError.js';
 
 // GET /api/v1/admin/documents?page=1&limit=20
 export function list(req: Request, res: Response): void {
@@ -14,10 +15,11 @@ export function list(req: Request, res: Response): void {
 
 // GET /api/v1/admin/documents/:documentId
 export function getById(req: Request, res: Response): void {
-  const document = documentsService.getById(String(req.params.documentId));
+  const documentId = String(req.params.documentId)
+  const document = documentsService.getById(documentId);
 
   if (!document) {
-    throw new AppError(404, 'Document not found', 'NOT_FOUND');
+    throw new ResourceNotFoundError(404, `Document with id '${documentId}' not found`, documentId, 'RESOURCE_NOT_FOUND',);
   }
 
   res.json({ data: document });

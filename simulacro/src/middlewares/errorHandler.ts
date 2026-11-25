@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 import { env } from '../config/env.js';
 import { AppError } from '../errors/AppError.js';
+import { ResourceNotFoundError } from '../errors/ResourceNotFoundError.js';
 
 export function errorHandler(
   err: Error,
@@ -26,6 +27,11 @@ export function errorHandler(
 
   if (err instanceof SyntaxError && 'body' in err) {
     res.status(400).json({ error: 'INVALID_JSON', message: 'Request body is not valid JSON' });
+    return;
+  }
+
+  if (err instanceof ResourceNotFoundError && 'body' in err) {
+    res.status(404).json({ message: err.message, resourceId: err.resourceId});
     return;
   }
 

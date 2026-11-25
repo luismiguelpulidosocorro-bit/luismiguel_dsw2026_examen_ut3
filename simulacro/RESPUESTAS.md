@@ -27,6 +27,7 @@ npm run dev (modo desarrollador)
 npm start (modo producción)
 ```
 
+
 **2. ¿Dónde se configura el puerto y cómo llega ese valor hasta el arranque del servidor?**
 
 El puerto se configura en el archivo `.env` de la siguiente manera:
@@ -44,3 +45,15 @@ export const env = {
 };
 ```
 
+Finalmente, dicho valor se le pasa al metodo `.listen()` en el archivo server.ts para que agarre dicho puerto y pueda empezar a escuchar peticiones:
+
+```
+app.listen(env.PORT, () => {
+  console.log(`Listening on http://localhost:${env.PORT} (${env.NODE_ENV})`);
+});
+```
+
+
+**3. ¿Por qué se sube a GitHub el .env.example y se excluye .env?**
+
+Se excluye el archivo `.env` por temas de seguridad y entorno debido que contiene datos privados que no deben ser publicos, asi como configuraciones propias de cada ordenador, mientras que `.env.examen se sube debido que es una platillas con las variables necesarias para iniciar el proyecto.
