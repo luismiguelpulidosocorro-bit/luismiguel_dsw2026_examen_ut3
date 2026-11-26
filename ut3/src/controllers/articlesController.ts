@@ -6,6 +6,8 @@ import type { NextFunction, Request, Response } from 'express';
 
 import { AppError } from '../errors/AppError.js';
 import * as articlesService from '../services/articlesService.js';
+import { env } from '../config/env.js';
+
 
 export function list(req: Request, res: Response, next: NextFunction): void {
   try {
@@ -31,13 +33,21 @@ export function getById(req: Request, res: Response, next: NextFunction): void {
 }
 
 export function create(req: Request, res: Response, next: NextFunction): void {
-  console.log('[4] articlesController.create', req.requestId);
-
+  if(env.DEPURACION === 1){
+    console.log('[4] articlesController.create', req.requestId);
+  }
+  
   try {
     const { title, description } = req.body;
     if (!title || typeof title !== 'string') {
       throw new AppError(400, 'Missing required field: title', 'BAD_REQUEST');
     }
+
+    if (description == "ERROR" ){
+      res.status(400).json({ error: "INVALID_DESCRIPTION", message: "Description must not contain ERROR" })
+      return;
+    }
+
     const article = articlesService.create(
       title.trim(),
       typeof description === 'string' ? description.trim() : '',

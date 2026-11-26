@@ -37,6 +37,11 @@ export function create(title: string, description: string): Article {
     description,
     createdAt: new Date().toISOString(),
   };
+
+  if (!description || description.trim() == " "){
+      article.description = "Sin descripción"
+  }
+
   articles.push(article);
   return article;
 }

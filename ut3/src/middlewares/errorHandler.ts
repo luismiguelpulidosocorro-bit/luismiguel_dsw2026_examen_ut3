@@ -15,7 +15,10 @@ export function errorHandler(
 ): void {
   const isProduction = env.NODE_ENV === 'production';
 
-  console.log('[errorHandler]', req.requestId, err.message);
+  if(env.DEPURACION === 1){
+    console.log('[errorHandler]', req.requestId, err.message);
+  }
+  
 
   console.error(
     JSON.stringify({
